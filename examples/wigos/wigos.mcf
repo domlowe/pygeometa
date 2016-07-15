@@ -1,0 +1,85 @@
+#This config file contains an example WIGOS metadata record.
+#There are lots of parts in this example. Not all WIGOS metadata records will contain all these parts.
+
+[header]
+gml_id=wigosexample1
+gml_identifier=http://wigos.wmo.int/TBD
+name=Example metadata record
+description=This is an example WIGOS record. It contains several object types and covers the elements required for Phase 1
+facility_id=http://wigos.wmo.int/a-b-c-d
+owner=http://linkToResponsibleParty
+
+# You can describe observing facilities using sections entitled [facility:n]
+
+[facility:1]
+gml_id=observingFacility1
+gml_identifier=http://wigos.wmo.int/a-b-c-d  
+name=MELBOURNE (OLYMPIC PARK)
+description=Source of Melbourne weather observations
+additional_description=Melbourne (Olympic Park) opened in November 2013 and has since superseded Melbourne La Trobe Street observation station which closed in January 2015
+online_resource=http://www.bom.gov.au/vic/observations/melbournemap.shtml
+#sets of location coordinates can separated by semi-colons (;). Corresponding valid times also separated by semi-colons.
+#locations=x1 y1;x2 y2  
+#but this example just has one location (3 Dimensional) at one time period. i.e. the facility has not moved over time
+locations=-37.8255 144.9816 7.53
+srsname=http://www.opengis.net/def/crs/EPSG/0/4979
+times_valid_from=2013-11-01T00:00:00Z
+#leave this end time blank if facility is still at this location
+times_valid_to=2016-01-01T00:00:00Z
+geopositioning_method=TO DO
+responsible_party_org_name=org name
+responsible_party_phone=123 456 789
+responsible_party_delivery_point=123 street name
+responsible_party_city=city name
+responsible_party_postal_code=postcode123
+responsible_party_country=country
+responsible_party_online_resource=http://url.to.organisation
+responsible_party_role = custodian  
+logentry_1 = 2015-05-01T00:00:00Z | Mickey Mouse | Removed large tree | The facility is no longer in shade 
+logentry_2 = 2016-06-01T00:00:00Z  | author... | description... | comments...
+logentry_3 = 2016-07-01T00:00:00Z | author... | description... | comments...
+
+
+#can add multiple facilities e.g.
+#[facility:2]
+#gml_id=observingFacility2
+#...etc..
+
+[facility:2]
+gml_id=observingFacility2
+gml_identifier=http://wigos.wmo.int/a-b-c-d  
+name=MELBOURNE (OLYMPIC PARK) - COPY
+description=Source of Melbourne weather observations
+additional_description=Melbourne (Olympic Park) opened in November 2013 and has since superseded Melbourne La Trobe Street observation station which closed in January 2015
+online_resource=http://www.bom.gov.au/vic/observations/melbournemap.shtml
+#sets of location coordinates can separated by semi-colons (;). Corresponding valid times also separated by semi-colons.
+#locations=x1 y1;x2 y2  
+#but this example just has one location (3 Dimensional) at one time period. i.e. the facility has not moved over time
+locations=-37.8255 144.9816 7.53
+srsname=http://www.opengis.net/def/crs/EPSG/0/4979
+times_valid_from=2013-11-01T00:00:00Z
+#leave this end time blank if facility is still at this location
+times_valid_to=2016-01-01T00:00:00Z
+geopositioning_method=TO DO
+responsible_party_org_name=org name
+responsible_party_phone=123 456 789
+responsible_party_delivery_point=123 street name
+responsible_party_city=city name
+responsible_party_postal_code=postcode123
+responsible_party_country=country
+responsible_party_online_resource=http://url.to.organisation
+responsible_party_role = custodian  
+logentry_1 = 2015-05-01T00:00:00Z | Mickey Mouse | Removed large tree | The facility is no longer in shade 
+logentry_2 = 2016-06-01T00:00:00Z  | author... | description... | comments...
+logentry_3 = 2016-07-01T00:00:00Z | author... | description... | comments...
+
+# You can describe observing equipment using sections entitled [equipment:n]
+[equipment:1]
+
+
+
+# You can describe observing collections using sections entitled [collection:n]
+
+
+# You can describe observations using sections entitled [observation:n]
+
