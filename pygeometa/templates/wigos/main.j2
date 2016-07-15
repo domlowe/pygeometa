@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+{% import 'common/iso19139-charstring.j2' as cs %}
+<wmdr:WIGOSMetadataRecord xmlns:wmdr="http://def.wmo.int/wmdr/2016" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:om="http://www.opengis.net/om/2.0" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:sam="http://www.opengis.net/sampling/2.0" xmlns:sams="http://www.opengis.net/samplingSpatial/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://def.wmo.int/wmdr/2016 ../wmdr.xsd" gml:id="{{ record['header']['gml_id'] }}">
+    <gml:description>{{ record['header']['description'] }}</gml:description>
+    <gml:identifier codeSpace="http://wigos.wmo.int">{{ record['header']['gml_identifier'] }}</gml:identifier>
+    <gml:name>{{ record['header']['name'] }}</gml:name>
+    <wmdr:observingFacilityId>{{ record['header']['facility_id'] }}</wmdr:observingFacilityId>
+    <wmdr:recordOwner xlink:href="{{ record['header']['owner'] }}"/>
+    {% for k, v in record.items() %}
+    {% if k.startswith('facility:') %}
+    <wmdr:facilityDefinition>
+        <wmdr:ObservingFacility gml:id="{{v['gml_id']}}">
+			<gml:description>{{v['description']}}</gml:description>
+			<gml:identifier codeSpace="http://wigos.wmo.int">{{v['gml_identifier']}}</gml:identifier>
+            <gml:name>{{v['name']}}</gml:name>
+            <wmdr:additionalDescription>{{v['additional_description']}}ddddd</wmdr:additionalDescription>
+			<wmdr:onlineResource>
+                <gmd:CI_OnlineResource>
+					<gmd:linkage>
+						<gmd:URL>{{v['online_resource']}}</gmd:URL>
+					</gmd:linkage>
+				</gmd:CI_OnlineResource>
+            </wmdr:onlineResource>
+            {% if 'locations' in v.keys() %}
+            {% set locationset=v['locations'].split(';') %}
+            {% for location in locationset %}
+            {% set index=locationset.index(location) %}            
+            <wmdr:geospatialLocation>              
+				<wmdr:TimestampedLocation>
+                    <wmdr:validTimePeriod>
+                        {# creates a unique gml id suffix#}
+                        {%set uniqueId=k.split(':')[1] + '_' ~ index %}
+                        <gml:TimePeriod gml:id="vtp{{uniqueId}}">
+                            <gml:beginPosition>{{v['times_valid_from'].split(';')[index] }}</gml:beginPosition>
+                            <gml:endPosition>{{v['times_valid_to'].split(';')[index] }}</gml:endPosition>
+                        </gml:TimePeriod>
+                    </wmdr:validTimePeriod>                    
+					<wmdr:location>
+						<gml:Point srsName="http://www.opengis.net/def/crs/EPSG/0/4979" gml:id="p{{uniqueId}}">                    
+							<gml:pos>{{location}}</gml:pos>
+						</gml:Point>
+					</wmdr:location>
+				</wmdr:TimestampedLocation>
+			</wmdr:geospatialLocation>
+            {% endfor %}        
+            {% endif %}                
+  			<wmdr:geopositioningMethod xlink:href="{{v['geopositioning_method']}}"/> 
+			<wmdr:responsibleParty>
+				<!-- details of the organisation responsible for the facility -->
+				<gmd:CI_ResponsibleParty>
+					<gmd:organisationName>
+                        <gco:CharacterString>{{v['responsible_party_org_name']}}</gco:CharacterString>
+                    </gmd:organisationName>
+					<gmd:contactInfo>                                                                      
+						<gmd:CI_Contact>                            
+							<gmd:phone>
+                                <gmd:CI_Telephone>
+                                    <gmd:voice>
+                                        <gco:CharacterString>{{v['responsible_party_phone']}}</gco:CharacterString>
+                                    </gmd:voice>
+                                </gmd:CI_Telephone>
+                            </gmd:phone>
+							<gmd:address>
+                                <gmd:CI_Address>
+                                    <gmd:deliveryPoint>
+                                        <gco:CharacterString>
+                                        {{v['responsible_party_delivery_point']}}
+                                        </gco:CharacterString>
+                                    </gmd:deliveryPoint>
+                                    <gmd:city>
+                                        <gco:CharacterString>
+                                            {{v['responsible_party_city']}}
+                                        </gco:CharacterString>
+                                    </gmd:city>
+                                    <gmd:postalCode>
+                                        <gco:CharacterString>
+                                            {{v['responsible_party_postal_code']}}
+                                        </gco:CharacterString>
+                                    </gmd:postalCode>
+                                    <gmd:country>
+                                        <gco:CharacterString>
+                                            {{v['responsible_party_country']}}
+                                        </gco:CharacterString>
+                                    </gmd:country>
+                                </gmd:CI_Address>
+                            </gmd:address>
+							<gmd:onlineResource xlink:href="{{v['responsible_party_online_resource']}}"/>
+						</gmd:CI_Contact>
+					</gmd:contactInfo>
+					<gmd:role>
+						<gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists#CI_RoleCode" codeListValue="{{v[responsible_party_role]}}"/>
+					</gmd:role>
+				</gmd:CI_ResponsibleParty>
+			</wmdr:responsibleParty>
+			<!-- 3-01 region of origin -->
+			<wmdr:wmoRegion xlink:href="SelectedFromCodelist"/>
+			<!-- 3-02 territory of origin -->
+			<wmdr:territoryName xlink:href="SelectedFromCodelist"/>
+			<!-- 3-09 Station Status -->
+			<wmdr:reportingStatus xlink:href="SelectedFromCodelist"/>
+			<wmdr:facilityLog>
+				<!-- the log for the facility can have any number of entries (Event Reports) to record information about the facility - note, detailed information about equipment at the facilty is recorded against Equipment -->
+				<wmdr:FacilityLog gml:id="f{{uniqueId}}"> <!-- to do -->
+                    {% for key, value in v.items() %}
+                        {% if key.startswith('logentry') %}
+                        <wmdr:logEntry>
+                            {% set entry = value.split('|') %}
+						<wmdr:EventReport>
+							<wmdr:datetime>{{entry[0]}}</wmdr:datetime>
+							<wmdr:author>{{entry[1]}}</wmdr:author>
+							<wmdr:description>{{entry[2]}}</wmdr:description>
+							<wmdr:additionalComments>{{entry[3]}}</wmdr:additionalComments>
+						</wmdr:EventReport>
+					</wmdr:logEntry>
+                    {% endif %}
+                    {% endfor %}
+                    <wmdr:facility xlink:href="linktofacility"/>
+				</wmdr:FacilityLog>
+			</wmdr:facilityLog>
+    
+        </wmdr:ObservingFacility>
+    </wmdr:facilityDefinition>
+    {% endif %}
+    {% endfor %}
+</wmdr:WIGOSMetadataRecord>
+
