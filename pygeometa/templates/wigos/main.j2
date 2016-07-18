@@ -100,7 +100,8 @@
 			<wmdr:reportingStatus xlink:href="SelectedFromCodelist"/>
 			<wmdr:facilityLog>
 				<!-- the log for the facility can have any number of entries (Event Reports) to record information about the facility - note, detailed information about equipment at the facilty is recorded against Equipment -->
-				<wmdr:FacilityLog gml:id="f{{uniqueId}}"> <!-- to do -->
+				{%set uniqueId=k.split(':')[1]%}
+                <wmdr:FacilityLog gml:id="fl{{uniqueId}}"> <!-- to do -->
                     {% for key, value in v.items() %}
                         {% if key.startswith('logentry') %}
                         <wmdr:logEntry>
